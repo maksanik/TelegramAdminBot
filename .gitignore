@@ -1,0 +1,11 @@
+# Folders
+/.venv
+/.vscode
+# Tests
+test.py
+test2.py
+test3.py
+# Personal 
+myConfig.ini
+testConfig.ini
+myTelegramBot.db
