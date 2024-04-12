@@ -4,7 +4,7 @@ import telebot
 from telebot import types
 
 config = configparser.ConfigParser()
-config.read("config/config.ini") # Enter path to your config
+config.read("config/сonfig.ini") # put your data in config
 
 
 bot = telebot.TeleBot(config["Default"]["bot_id"])
@@ -19,7 +19,7 @@ def start(message):
     """Start message"""
     
     bot.send_message(
-        message.chat.id, '''Привет! Чтобы отправить пост в предложку, отправь картинку/видео или картинку/видео с текстом, чтобы она ушла на проверку.''') #TODO:  Отправлять посты в предложку можно не более 3-х раз в день
+        message.chat.id, '''Привет! Чтобы отправить пост в предложку, отправь картинку/видео или картинку/видео с текстом, чтобы она ушла на проверку.''') 
 
 @bot.message_handler(commands=['check_id'])
 def check(message):
@@ -69,8 +69,33 @@ def delete(message):
     conn.commit()
     conn.close()
     bot.delete_message(ADMIN_CHAT_ID, msg.id)
-    bot.send_message(message.chat.id, "Выполнено")
+    bot.send_message(message.chat.id, "Пост удалён!")
 
+@bot.message_handler(commands=['post'])
+def delete(message):
+    """Publish current post"""
+    
+    if message.from_user.id != SUPER_ADMIN_ID or message.chat.id != ADMIN_CHAT_ID:
+        return
+    
+    msg = message.reply_to_message
+    
+    if msg.content_type not in ["photo", "video"]:
+        return
+    
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE FROM Posts WHERE message_id = {msg.id}")
+    conn.commit()
+    conn.close()
+    
+    if msg.content_type == "photo":
+            bot.send_photo(CHANNEL_ID, msg.photo[0].file_id, caption=msg.caption)
+    elif msg.content_type == "video":
+            bot.send_video(CHANNEL_ID, msg.video.file_id, caption=msg.caption)
+             
+    bot.delete_message(msg.chat.id, msg.id)
+    bot.send_message(ADMIN_CHAT_ID, "Пост опубликован!")
 
 
 @bot.message_handler(content_types=["photo", "video"])
