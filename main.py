@@ -18,6 +18,9 @@ DATABASE = config["Default"]["database_path"]
 def start(message):
     """Start message"""
     
+    if message.chat.id == ADMIN_CHAT_ID:
+        return
+    
     bot.send_message(
         message.chat.id, '''Привет! Чтобы отправить пост в предложку, отправь картинку/видео или картинку/видео с текстом, чтобы она ушла на проверку.''') 
 
