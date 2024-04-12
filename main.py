@@ -4,7 +4,7 @@ import telebot
 from telebot import types
 
 config = configparser.ConfigParser()
-config.read("config/сonfig.ini") # put your data in config
+config.read("config/config.ini") # put your data in config
 
 
 bot = telebot.TeleBot(config["Default"]["bot_id"])
@@ -75,7 +75,7 @@ def delete(message):
     bot.send_message(message.chat.id, "Пост удалён!")
 
 @bot.message_handler(commands=['post'])
-def delete(message):
+def post(message):
     """Publish current post"""
     
     if message.from_user.id != SUPER_ADMIN_ID or message.chat.id != ADMIN_CHAT_ID:
